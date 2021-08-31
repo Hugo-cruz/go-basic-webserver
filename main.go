@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -34,6 +35,7 @@ func main() {
 	router.HandleFunc("/contato/{id}", GetPerson).Methods("GET")
 	router.HandleFunc("/contato/{id}", CreatePerson).Methods("POST")
 	router.HandleFunc("/contato/{id}", DeletePerson).Methods("DELETE")
+	router.HandleFunc("/address/{personID}", GetAddress).Methods("GET")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
 
@@ -41,6 +43,16 @@ func main() {
 //func GetPerson(w http.ResponseWriter, r *http.Request)    {}
 //func CreatePerson(w http.ResponseWriter, r *http.Request) {}
 //func DeletePerson(w http.ResponseWriter, r *http.Request) {}
+func GetAddress(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	fmt.Printf("%v\n", params["personID"])
+	for _, item := range people {
+		if item.ID == params["personID"] {
+			json.NewEncoder(w).Encode(item.Address)
+		}
+	}
+
+}
 
 func GetPeople(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(people)
